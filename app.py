@@ -18,7 +18,7 @@ def init_db():
 def chat():
     if 'user' not in session:
         return redirect('/login')
-    return "Bienvenue dans le chat!"
+    return render_template("chat.html")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -33,7 +33,7 @@ def login():
         result = c.fetchone()
         conn.close()
         if result and check_password_hash(result[0], password):
-            session.permanent = remember  # ← active cookie longue durée si coché
+            session.permanent = remember  
             if remember:
                 app.permanent_session_lifetime = timedelta(days=30)
             else:
