@@ -35,6 +35,14 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
+        .couach-logo {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: 0.2em;
+            color: white;
+        }
+        
         .sidebar {
             width: 320px;
             transition: all 0.3s ease;
@@ -233,6 +241,12 @@
                         <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                         <span>IA connectée</span>
                     </div>
+                    <button class="text-gray-600 hover:text-gray-800 p-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -240,7 +254,33 @@
         <!-- Zone des messages -->
         <div id="chatContainer" class="flex-1 overflow-y-auto p-6 scroll-smooth">
             <div id="messagesContainer" class="max-w-4xl mx-auto space-y-4">
-                <!-- Les messages seront ajoutés ici -->
+                <!-- Message de bienvenue -->
+                <div class="chat-message">
+                    <div class="message-ai rounded-2xl p-4 shadow-sm">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-800 mb-1">Assistant Couach IA</p>
+                                <div class="text-slate-700">
+                                    <p>Bonjour ! Je suis votre assistant maritime spécialisé Couach.</p>
+                                    <p class="mt-2">Je peux vous aider avec :</p>
+                                    <ul class="mt-2 space-y-1 text-sm">
+                                        <li>• Informations sur les yachts Couach</li>
+                                        <li>• Conseils de navigation</li>
+                                        <li>• Services maritimes</li>
+                                        <li>• Maintenance et entretien</li>
+                                    </ul>
+                                    <p class="mt-3 text-sm text-slate-600">Comment puis-je vous assister aujourd'hui ?</p>
+                                </div>
+                                <span class="text-xs text-slate-500 mt-2 block">Maintenant</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Indicateur de frappe -->
                 <div id="typingIndicator" class="typing-indicator chat-message">
@@ -300,99 +340,45 @@
         let sidebarCollapsed = false;
         
         // Éléments DOM
-        let sidebar, toggleSidebar, newChatBtn, chatHistory, messagesContainer;
-        let messageInput, sendBtn, typingIndicator, charCount, chatContainer;
-
-        // Fonctions
-        function initializeElements() {
-            sidebar = document.getElementById('sidebar');
-            toggleSidebar = document.getElementById('toggleSidebar');
-            newChatBtn = document.getElementById('newChatBtn');
-            chatHistory = document.getElementById('chatHistory');
-            messagesContainer = document.getElementById('messagesContainer');
-            messageInput = document.getElementById('messageInput');
-            sendBtn = document.getElementById('sendBtn');
-            typingIndicator = document.getElementById('typingIndicator');
-            charCount = document.getElementById('charCount');
-            chatContainer = document.getElementById('chatContainer');
-
-            // S'assurer que typingIndicator est dans messagesContainer
-            if (typingIndicator && typingIndicator.parentNode !== messagesContainer) {
-                messagesContainer.appendChild(typingIndicator);
-            }
-
-            return !!(messageInput && sendBtn && typingIndicator && messagesContainer);
-        }
-
-        // Initialisation des gestionnaires d'événements
-        function initializeEventListeners() {
-            // Gestion de l'envoi des messages
-            sendBtn.addEventListener('click', sendMessage);
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const newChatBtn = document.getElementById('newChatBtn');
+        const chatHistory = document.getElementById('chatHistory');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const charCount = document.getElementById('charCount');
+        const chatContainer = document.getElementById('chatContainer');
+        
+        
+        // Gestion de la sidebar
+        toggleSidebar.addEventListener('click', () => {
+            sidebarCollapsed = !sidebarCollapsed;
+            sidebar.classList.toggle('collapsed');
             
-            messageInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    if (!sendBtn.disabled) {
-                        sendMessage();
-                    }
-                }
-            });
+            const sidebarContent = document.getElementById('sidebarContent');
+            const newChatText = document.getElementById('newChatText');
+            const newChatIcon = document.getElementById('newChatIcon');
+            const userDetails = document.getElementById('userDetails');
             
-            messageInput.addEventListener('input', () => {
-                updateCharCount();
-                adjustTextareaHeight();
-            });
-
-            // Gestion de la sidebar
-            toggleSidebar.addEventListener('click', () => {
-                sidebarCollapsed = !sidebarCollapsed;
-                sidebar.classList.toggle('collapsed');
-                
-                const sidebarContent = document.getElementById('sidebarContent');
-                const newChatText = document.getElementById('newChatText');
-                const newChatIcon = document.getElementById('newChatIcon');
-                const userDetails = document.getElementById('userDetails');
-                
-                if (sidebarCollapsed) {
-                    sidebarContent.style.display = 'none';
-                    newChatText.classList.add('hidden');
-                    newChatIcon.classList.remove('hidden');
-                    userDetails.style.display = 'none';
-                } else {
-                    sidebarContent.style.display = 'block';
-                    newChatText.classList.remove('hidden');
-                    newChatIcon.classList.add('hidden');
-                    userDetails.style.display = 'block';
-                }
-            });
-
-            // Gestion des chats
-            newChatBtn.addEventListener('click', createNewChat);
-
-            // Gestion du redimensionnement
-            window.addEventListener('resize', () => {
-                scrollToBottom();
-            });
-        }
-
-        // Attendre que le DOM soit complètement chargé
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialisation des éléments DOM
-            if (!initializeElements()) {
-                console.error('Éléments du formulaire non trouvés');
-                return;
+            if (sidebarCollapsed) {
+                sidebarContent.style.display = 'none';
+                newChatText.classList.add('hidden');
+                newChatIcon.classList.remove('hidden');
+                userDetails.style.display = 'none';
+            } else {
+                sidebarContent.style.display = 'block';
+                newChatText.classList.remove('hidden');
+                newChatIcon.classList.add('hidden');
+                userDetails.style.display = 'block';
             }
-
-            // Initialisation des événements
-            initializeEventListeners();
-
-            // Initialisation de l'interface
-            addWelcomeMessage();
-            messageInput.focus();
-            createWaveAnimation();
         });
-
-         function createNewChat() {
+        
+        // Nouveau chat
+        newChatBtn.addEventListener('click', createNewChat);
+        
+        function createNewChat() {
             chatCounter++;
             const chatId = `chat-${chatCounter}`;
             const chatTitle = `Conversation ${chatCounter}`;
@@ -442,6 +428,7 @@
         }
         
         function switchToChat(chatId) {
+            // Mettre à jour l'interface
             document.querySelectorAll('.chat-item').forEach(item => {
                 item.classList.remove('active');
             });
@@ -476,6 +463,7 @@
                     addMessageToUI(message.content, message.isUser, false);
                 });
             } else {
+                // Message de bienvenue par défaut
                 addWelcomeMessage();
             }
         }
@@ -497,13 +485,13 @@
                             <div>
                                 <p class="font-medium text-slate-800 mb-1">Assistant Couach IA</p>
                                 <div class="text-slate-700">
-                                    <p>Bonjour ! Je suis votre assistant Couach spécialisé en programmation.</p>
+                                    <p>Bonjour ! Je suis votre assistant maritime spécialisé Couach.</p>
                                     <p class="mt-2">Je peux vous aider avec :</p>
                                     <ul class="mt-2 space-y-1 text-sm">
-                                        <li>• Développement web</li>
-                                        <li>• Conseils de programmation</li>
-                                        <li>• Services informatiques</li>
-                                        <li>• Maintenance et support technique</li>
+                                        <li>• Informations sur les yachts Couach</li>
+                                        <li>• Conseils de navigation</li>
+                                        <li>• Services maritimes</li>
+                                        <li>• Maintenance et entretien</li>
                                     </ul>
                                     <p class="mt-3 text-sm text-slate-600">Comment puis-je vous assister aujourd'hui ?</p>
                                 </div>
@@ -516,6 +504,7 @@
             messagesContainer.innerHTML = welcomeMessage;
         }
         
+        // Gestion des messages
         function addMessageToUI(content, isUser, animate = true) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `chat-message${animate ? '' : ' opacity-100'}`;
@@ -564,12 +553,8 @@
                 `;
             }
             
-            // Vérifier si typingIndicator est un enfant de messagesContainer
-            if (typingIndicator && typingIndicator.parentNode === messagesContainer) {
-                messagesContainer.insertBefore(messageDiv, typingIndicator);
-            } else {
-                messagesContainer.appendChild(messageDiv);
-            }
+            // Insérer avant l'indicateur de frappe
+            messagesContainer.insertBefore(messageDiv, typingIndicator);
             scrollToBottom();
         }
         
@@ -589,30 +574,29 @@
         }
         
         // Simulation de réponse IA
-        async function simulateAIResponse(userMessage) {
+        function simulateAIResponse(userMessage) {
             showTyping();
 
-            try {
-                // Appel à l'API locale Ollama
-                const response = await fetch("http://localhost:11434/api/generate", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        model: "mistral",  // Utilisation du modèle Mistral
-                        prompt: `Tu es un assistant en programmation informatique et tu es là pour aider les employés de l'entreprise Couach dans leurs projet de développement : ${userMessage}`,
-                        stream: false
-                    })
-                });
-
-                const data = await response.json();
+            fetch("http://localhost:11434/api/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "mistral",  // ou "llama3", etc. selon ton modèle
+                    prompt: userMessage,
+                    stream: false
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
                 hideTyping();
+
                 const aiResponse = data.response || "Je n'ai pas compris votre question.";
+
                 addMessageToUI(aiResponse, false);
 
                 if (currentChatId) {
-                    // Sauvegarde des messages dans l'historique
                     chats[currentChatId].messages.push({
                         content: userMessage,
                         isUser: true,
@@ -624,39 +608,61 @@
                         timestamp: new Date()
                     });
                 }
-            } catch (error) {
+            })
+            .catch(error => {
                 hideTyping();
                 console.error("Erreur IA locale :", error);
-                addMessageToUI("Désolé, une erreur s'est produite lors de la génération de la réponse. Assurez-vous que le service Ollama est bien lancé sur votre machine.", false);
-            }
+                addMessageToUI("Désolé, une erreur s’est produite lors de la génération de la réponse.", false);
+            });
         }
 
+        
         // Envoi de message
-        async function sendMessage() {
+        function sendMessage() {
             const message = messageInput.value.trim();
             if (!message) return;
             
+            // Créer un nouveau chat si nécessaire
             if (!currentChatId) {
                 createNewChat();
             }
             
+            // Ajouter le message utilisateur
+            addMessageToUI(message, true);
+            
+            // Vider le champ de saisie
+            messageInput.value = '';
+            updateCharCount();
+            adjustTextareaHeight();
+            
+            // Désactiver le bouton temporairement
             sendBtn.disabled = true;
             
-            try {
-                addMessageToUI(message, true);
-                messageInput.value = '';
-                updateCharCount();
-                adjustTextareaHeight();
-                
-                await simulateAIResponse(message);
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi du message:', error);
-            } finally {
+            // Simuler la réponse IA
+            simulateAIResponse(message);
+            
+            // Réactiver le bouton après un délai
+            setTimeout(() => {
                 sendBtn.disabled = false;
-            }
+            }, 2000);
         }
         
-
+        // Gestion des événements
+        sendBtn.addEventListener('click', sendMessage);
+        
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (!sendBtn.disabled) {
+                    sendMessage();
+                }
+            }
+        });
+        
+        messageInput.addEventListener('input', () => {
+            updateCharCount();
+            adjustTextareaHeight();
+        });
         
         function updateCharCount() {
             const count = messageInput.value.length;
@@ -668,6 +674,7 @@
                 charCount.classList.remove('text-red-500');
             }
             
+            // Empêcher la saisie au-delà de 2000 caractères
             if (count >= 2000) {
                 messageInput.value = messageInput.value.substring(0, 2000);
             }
@@ -676,6 +683,97 @@
         function adjustTextareaHeight() {
             messageInput.style.height = 'auto';
             messageInput.style.height = Math.min(messageInput.scrollHeight, 128) + 'px';
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ajouter le message de bienvenue initial
+            addWelcomeMessage();
+            
+            // Créer quelques chats d'exemple pour la démonstration
+            setTimeout(() => {
+                createExampleChats();
+            }, 500);
+        });
+        
+        function createExampleChats() {
+            // Chat d'exemple 1
+            const chat1Id = 'example-1';
+            chats[chat1Id] = {
+                id: chat1Id,
+                title: 'Informations Yacht Series 3200',
+                messages: [
+                    { content: "Bonjour, j'aimerais des informations sur la série 3200", isUser: true, timestamp: new Date() },
+                    { content: "Bonjour ! La série Couach 3200 est l'un de nos modèles phares. Ces yachts de 32 mètres offrent un parfait équilibre entre performance, confort et élégance. Souhaitez-vous des détails sur les spécifications techniques, les aménagements ou les options de personnalisation ?", isUser: false, timestamp: new Date() }
+                ],
+                createdAt: new Date(Date.now() - 86400000) // Hier
+            };
+            
+            const chatItem1 = document.createElement('div');
+            chatItem1.className = 'chat-item p-3 rounded-lg text-white text-sm';
+            chatItem1.dataset.chatId = chat1Id;
+            chatItem1.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 truncate">
+                        <p class="font-medium truncate">Informations Yacht Series 3200</p>
+                        <p class="text-white/60 text-xs">Hier</p>
+                    </div>
+                    <button class="delete-chat text-white/60 hover:text-red-400 p-1" data-chat-id="${chat1Id}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            // Chat d'exemple 2
+            const chat2Id = 'example-2';
+            chats[chat2Id] = {
+                id: chat2Id,
+                title: 'Conseils de navigation',
+                messages: [
+                    { content: "Quels sont vos conseils pour une navigation en Méditerranée ?", isUser: true, timestamp: new Date() },
+                    { content: "La Méditerranée offre des conditions de navigation exceptionnelles ! Voici mes recommandations : vérifiez toujours les prévisions météo, respectez les zones de navigation protégées, et assurez-vous d'avoir tous les équipements de sécurité requis. Les mois de mai à septembre sont idéaux avec des vents généralement favorables.", isUser: false, timestamp: new Date() }
+                ],
+                createdAt: new Date(Date.now() - 172800000) // Il y a 2 jours
+            };
+            
+            const chatItem2 = document.createElement('div');
+            chatItem2.className = 'chat-item p-3 rounded-lg text-white text-sm';
+            chatItem2.dataset.chatId = chat2Id;
+            chatItem2.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 truncate">
+                        <p class="font-medium truncate">Conseils de navigation</p>
+                        <p class="text-white/60 text-xs">Il y a 2 jours</p>
+                    </div>
+                    <button class="delete-chat text-white/60 hover:text-red-400 p-1" data-chat-id="${chat2Id}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            // Ajouter les événements
+            [chatItem1, chatItem2].forEach((item, index) => {
+                const chatId = index === 0 ? chat1Id : chat2Id;
+                
+                item.addEventListener('click', (e) => {
+                    if (!e.target.closest('.delete-chat')) {
+                        switchToChat(chatId);
+                    }
+                });
+                
+                item.querySelector('.delete-chat').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteChat(chatId);
+                });
+                
+                chatHistory.appendChild(item);
+            });
+            
+            chatCounter = 2; // Ajuster le compteur
         }
         
         // Animation des vagues en arrière-plan
@@ -687,6 +785,16 @@
                 document.body.style.backgroundPosition = `${waveOffset}px 0`;
             }, 100);
         }
+        
+        createWaveAnimation();
+        
+        // Gestion du redimensionnement
+        window.addEventListener('resize', () => {
+            scrollToBottom();
+        });
+        
+        // Focus automatique sur le champ de saisie
+        messageInput.focus();
     </script>
-        
-        
+</body>
+</html>

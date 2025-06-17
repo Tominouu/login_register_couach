@@ -58,6 +58,10 @@ def register():
         return "Nom d'utilisateur déjà pris"
     return redirect('/login')
 
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+        return render_template('fix.html')
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
